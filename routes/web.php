@@ -20,4 +20,4 @@ Route::any('/index','Weixin\WeixinController@index');
 Route::get('/checkSignature','Weixin\WeixinController@checkSignature');
 Route::get('/getToken','Weixin\WeixinController@getToken');
 
-R
+
