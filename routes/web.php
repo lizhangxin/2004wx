@@ -18,8 +18,6 @@ Route::get('/', function () {
 Route::get('/add','TextController@add');
 Route::any('/index','Weixin\WeixinController@index');
 Route::get('/checkSignature','Weixin\WeixinController@checkSignature');
+Route::get('/getToken','Weixin\WeixinController@getToken');
 
-Route::any('/getuserinfo','Weixin\WeixinController@getUserInfo');
-Route::any('/getuseropenid','Weixin\WeixinController@getuseropenid');
-Route::any('/store','Weixin\WeixinController@store');
-Route::any('/list','Weixin\WeixinController@list');
+R
