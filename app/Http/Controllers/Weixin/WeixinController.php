@@ -16,6 +16,7 @@ class WeixinController extends Controller
 //            echo $_GET["echostr"];
 //        }
         $this->responseMsg();
+        $this->infocodl();
     }
     public function checkSignature(){
         $signature = request()->get("signature");//["signature"];
@@ -44,7 +45,7 @@ class WeixinController extends Controller
             echo "有缓存";
             echo '<br>';
         }else{
-                echo "没有缓存";
+            echo "没有缓存";
             $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".env('APPID')."&secret=".env('WX_APPSEC');
             // dd($url);
             $res = file_get_contents($url);
