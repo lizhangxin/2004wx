@@ -10,6 +10,13 @@ use log;
 class WeixinController extends Controller
 {
 
+    public function index(){
+//        $res = $this->checkSignature();
+//        if ($res){
+//            echo $_GET["echostr"];
+//        }
+        $this->responseMsg();
+    }
     public function checkSignature(){
         $signature = request()->get("signature");//["signature"];
         $timestamp = request()->get("timestamp");//["timestamp"];
@@ -49,6 +56,19 @@ class WeixinController extends Controller
             Redis::expire($key,3600);
         }
         echo 'access_token'.$token;
+    }
+    public function responseMsg(){
+        $poststr = file_get_contents("php://input");
+        Log::info('======'.$poststr);
+        $postarray = simplexml_load_string($poststr);
+        if ($postarray->MsgType=='event'){
+            if ($postarray->Event=='subscribe'){
+                $array = ['关注成功','你好','zzzz'];
+                $Content = $array[array_rand($array)];
+                infocodl($postarray,$Content);
+            }
+        }
+
     }
 
 }
