@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class WeixinController extends Controller
 {
 
-    private function checkSignature(Request $request)
+    public function checkSignature(Request $request)
     {   $echostr->$request->get('echostr');
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
@@ -26,5 +26,5 @@ class WeixinController extends Controller
             echo "111";
         }
     }
-
+  
 }
