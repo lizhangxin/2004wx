@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 class WeixinController extends Controller
 {
 
-    private function checkSignature()
-    {   
+    private function checkSignature(Request $request)
+    {   $echostr->$request->get('echostr');
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
         $nonce = $_GET["nonce"];
@@ -21,7 +21,7 @@ class WeixinController extends Controller
         $tmpStr = sha1($tmpStr);
         
         if ($tmpStr == $signature) {
-            echo $_GET['echostr'];
+            echo $echostr;
         } else {
             echo "111";
         }
