@@ -65,10 +65,25 @@ class WeixinController extends Controller
             if ($postarray->Event=='subscribe'){
                 $array = ['关注成功','你好','zzzz'];
                 $Content = $array[array_rand($array)];
-                infocodl($postarray,$Content);
+                $this->infocodl($postarray,$Content);
             }
         }
 
+    }
+    public function infocodl($postarray,$Content){
+        $ToUserName =$postarray->FromUserName;
+        $FromUserName = $postarray->ToUserName;
+        $time=time();
+        $text ="text";
+        $ret = '<xml>
+                    <ToUserName><![CDATA[%s]]></ToUserName>
+                    <FromUserName><![CDATA[%s]]></FromUserName>
+                    <CreateTime>%s</CreateTime>
+                    <MsgType><![CDATA[%s]]></MsgType>
+                    <Content><![CDATA[%s]]></Content>
+                </xml>';
+        $info = sprintf($ret,$ToUserName,$FromUserName,$time,$text,$Content);
+        echo $info;
     }
 
 }
