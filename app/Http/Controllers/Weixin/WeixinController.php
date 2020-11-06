@@ -10,7 +10,7 @@ use log;
 class WeixinController extends Controller
 {
 
-    public function checkSignature(Request $request){
+    public function checkSignature(){
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
         $nonce = $_GET["nonce"];
