@@ -9,29 +9,34 @@ use Log;
 
 class WeixinController extends Controller
 {
+    public function index()
+    {
+//        $res = $this->checkSignature();
+//        if ($res){
+//            echo $_GET["echostr"];
+//        }
+        $this->responseMsg();
 
-    public function checkSignature(){
-        $signature = request()->get("signature");//["signature"];
-        $timestamp = request()->get("timestamp");//["timestamp"];
-        $nonce = request()->get("nonce");//["nonce"];
+    }
+        private function checkSignature()
+    {
+        $signature = $_GET["signature"];
+        $timestamp = $_GET["timestamp"];
+        $nonce = $_GET["nonce"];
 
-        $token = env('WX_TOKEN');
+        $token = config('lzx.Token');
         $tmpArr = array($token, $timestamp, $nonce);
         sort($tmpArr, SORT_STRING);
         $tmpStr = implode($tmpArr);
         $tmpStr = sha1($tmpStr);
 
-        if( $tmpStr == $signature ){  //验证通过
-            // 1接收数据
-            $xml_str = file_get_contents("php://input");
-            //接收日志
-            file_put_contents('lzx.event.log',$xml_str);
-            echo '';
-            die;
-        }else{
-            echo "";
+        if ($tmpStr == $signature) {
+            return true;
+        } else {
+            return false;
         }
     }
+
 
     public function getToken(){
         // Cache::flush();
@@ -55,6 +60,20 @@ class WeixinController extends Controller
         }
         echo 'access_token'.$token;
     }
-}
+        public function responseMsg(){
+            $poststr = file_get_contents("php://input");
+            Log::info('======'.$poststr);
+            $postarray = simplexml_load_string($poststr);
+            if ($postarray->MsgType=='event'){
+                if ($postarray->Event=='subscribe'){
+                    $array = ['关注成功','你好','zzzz'];
+                    $Content = $array[array_rand($array)];
+                    infocodl($postarray,$Content);
+                }
+            }
+
+        }
+
+    }
 
 
