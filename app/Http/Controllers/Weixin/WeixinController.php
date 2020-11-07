@@ -4,39 +4,35 @@ namespace App\Http\Controllers\Weixin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use Log;
+
 
 class WeixinController extends Controller
 {
-    public function index()
-    {
-//        $res = $this->checkSignature();
-//        if ($res){
-//            echo $_GET["echostr"];
-//        }
-        $this->responseMsg();
 
-    }
-        private function checkSignature()
-    {
-        $signature = $_GET["signature"];
-        $timestamp = $_GET["timestamp"];
-        $nonce = $_GET["nonce"];
+    public function checkSignature(){
+        $signature = request()->get("signature");//["signature"];
+        $timestamp = request()->get("timestamp");//["timestamp"];
+        $nonce = request()->get("nonce");//["nonce"];
 
-        $token = config('lzx.Token');
+        $token = env('WX_TOKEN');
         $tmpArr = array($token, $timestamp, $nonce);
         sort($tmpArr, SORT_STRING);
         $tmpStr = implode($tmpArr);
         $tmpStr = sha1($tmpStr);
 
-        if ($tmpStr == $signature) {
-            return true;
-        } else {
-            return false;
+        if( $tmpStr == $signature ){  //验证通过
+            // 1接收数据
+            $xml_str = file_get_contents("php://input");
+            //接收日志
+            file_put_contents('lzx.event.log',$xml_str);
+            echo '';
+            die;
+        }else{
+            echo "";
         }
     }
-
 
     public function getToken(){
         // Cache::flush();
@@ -60,20 +56,39 @@ class WeixinController extends Controller
         }
         echo 'access_token'.$token;
     }
-        public function responseMsg(){
-            $poststr = file_get_contents("php://input");
-            Log::info('======'.$poststr);
-            $postarray = simplexml_load_string($poststr);
-            if ($postarray->MsgType=='event'){
-                if ($postarray->Event=='subscribe'){
-                    $array = ['关注成功','你好','zzzz'];
-                    $Content = $array[array_rand($array)];
-                    infocodl($postarray,$Content);
-                }
-            }
-
-        }
-
+    public function text($postArray,$content){
+        $toUser = $postArray->FromUserName;
+        Log::info('lzx========',$toUser);
+        $fromUser = $postArray->ToUserName;
+        $template = "<xml>
+                                    <ToUserName><![CDATA[%s]]></ToUserName>
+                                    <FromUserName><![CDATA[%s]]></FromUserName>
+                                    <CreateTime>%s</CreateTime>
+                                    <MsgType><![CDATA[%s]]></MsgType>
+                                    <Content><![CDATA[%s]]></Content>
+                                </xml>";
+        $info = sprintf( $template, $toUser, $fromUser, time(), 'text', $content);
+        echo $info;
     }
+    public function responseMsg(){
+        $postStr = file_get_contents("php://input");
+        $postArray = simplexml_load_string($postStr);
+        if ($postArray->MsgType=="event"){
+            if ($postArray->Event=="subscribe"){
+                $content="欢迎您关注失恋小铺";
+                $this->text($postArray,$content);
+
+            }
+        }elseif ($postArray->MsgType=="text"){
+            $msg=$postArray->Content;
+            switch ($msg){
+                case '你好';
+                    $content='enen';
+                    $this->text($postArray,$content);
+                    break;
+            }
+        }
+    }
+}
 
 
