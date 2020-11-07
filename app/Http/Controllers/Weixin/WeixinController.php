@@ -10,14 +10,6 @@ use Log;
 class WeixinController extends Controller
 {
 
-    public function index(){
-//        $res = $this->checkSignature();
-//        if ($res){
-//            echo $_GET["echostr"];
-//        }
-        $this->responseMsg();
-        $this->infocodl();
-    }
     public function checkSignature(){
         $signature = request()->get("signature");//["signature"];
         $timestamp = request()->get("timestamp");//["timestamp"];
@@ -29,14 +21,19 @@ class WeixinController extends Controller
         $tmpStr = implode($tmpArr);
         $tmpStr = sha1($tmpStr);
 
-        if ($tmpStr == $signature) {
-            echo $_GET['echostr'];
-        } else {
-            echo "wx";
+        if( $tmpStr == $signature ){  //验证通过
+            // 1接收数据
+            $xml_str = file_get_contents("php://input");
+            //接收日志
+            file_put_contents('lzx.event.log',$xml_str);
+            echo '';
+            die;
+        }else{
+            echo "";
         }
-
     }
-     public function getToken(){
+
+    public function getToken(){
         // Cache::flush();
        $key = 'wx:access_token';
        $token = Redis::get($key);
@@ -57,55 +54,6 @@ class WeixinController extends Controller
             Redis::expire($key,3600);
         }
         echo 'access_token'.$token;
-    }
-    public function responseMsg()
-    {
-        //get post data, May be due to the different environments
-        $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
-
-        //extract post data
-        if (!empty($postStr)){
-
-            $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-            $fromUsername = $postObj->FromUserName;
-            $toUsername = $postObj->ToUserName;
-            $type = $postObj->MsgType;
-            $customrevent = $postObj->Event;
-            $keyword = trim($postObj->Content);
-            $time = time();
-            $textTpl = "<xml>
-       <ToUserName><![CDATA[%s]]></ToUserName>
-       <FromUserName><![CDATA[%s]]></FromUserName>
-       <CreateTime>%s</CreateTime>
-       <MsgType><![CDATA[%s]]></MsgType>
-       <Content><![CDATA[%s]]></Content>
-       <FuncFlag>0</FuncFlag>
-       </xml>";
-            if($type=="event" and $customrevent=="subscribe"){
-                $contentStr = "感谢你的关注\n回复1查看联系方式\n回复2查看最新资讯\n回复3查看法律文书";
-                $msgType = "text";
-                $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
-                echo $resultStr;
-            }
-            if(!empty( $keyword ))
-            {
-                $msgType = "text";
-                if($keyword=="1"){
-                    $contentStr = "qiphon";}
-                if($keyword=="2"){
-                    $contentStr = "test 。";}
-                if($keyword=="3"){
-                    $contentStr = "test333";}
-                $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
-                echo $resultStr;
-            }else{
-                echo "Input something...";
-            }
-
-        }else {
-            echo "";
-            exit;
-        }
     }
 }
 
