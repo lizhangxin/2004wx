@@ -28,7 +28,7 @@ class WeixinController extends Controller
             //接收日志
             file_put_contents('lzx.event.log',$xml_str);
             echo '';
-            die;
+            $this->responseMsg();
         }else{
             echo "";
         }
