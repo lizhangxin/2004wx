@@ -15,8 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/add','TextController@add');
-Route::any('/index','Weixin\WeixinController@index');
+//Route::get('/add','TextController@add');
+//Route::any('/index','Weixin\WeixinController@index');
 Route::post('/checkSignature','Weixin\WeixinController@checkSignature');
 Route::get('/getToken','Weixin\WeixinController@getToken');
 

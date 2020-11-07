@@ -58,7 +58,7 @@ class WeixinController extends Controller
     }
     public function text($postArray,$content){
         $toUser = $postArray->FromUserName;
-        Log::info('lzx========',$toUser);
+//        Log::info('lzx========',$toUser);
         $fromUser = $postArray->ToUserName;
         $template = "<xml>
                                     <ToUserName><![CDATA[%s]]></ToUserName>
