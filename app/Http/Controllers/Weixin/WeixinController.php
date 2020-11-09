@@ -98,7 +98,7 @@ class WeixinController extends Controller
         if($weather['success']){
             $content = '';
             $v=$weather['result']['realTime'];
-                $content .= "日期:".$v['week']."当日温度:".$v['wtTemp1']."天气:".$v['wtId1']."风向:".$v['wtWindNm1'];
+                $content .= "日期:".$v['week']."当日温度:".$v['wtTemp']."天气:".$v['wtNm']."风向:".$v['wtWindNm'];
 
         }
         return $content;
