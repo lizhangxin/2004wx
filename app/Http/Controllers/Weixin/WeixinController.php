@@ -58,7 +58,7 @@ class WeixinController extends Controller
 
     public function responseMsg(){
         $postStr = file_get_contents("php://input");
-        $postArray = simplexml_load_string($postStr);
+        $postArray= simplexml_load_string($postStr,"SimpleXMLElement",LIBXML_NOCDATA);
         if ($postArray->MsgType=="event"){
             if ($postArray->Event=="subscribe"){
                 $array = ['阳光不燥微风正好', '你我山巅自相逢'];
