@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 //Route::get('/add','TextController@add');
 //Route::any('/index','Weixin\WeixinController@index');
-Route::post('/checkSignature','Weixin\WeixinController@checkSignature');
+Route::any('/checkSignature','Weixin\WeixinController@checkSignature');
 Route::get('/getToken','Weixin\WeixinController@getToken');
 
 
