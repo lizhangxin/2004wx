@@ -19,6 +19,7 @@ Route::get('/', function () {
 //Route::any('/index','Weixin\WeixinController@index');
 Route::any('/checkSignature','Weixin\WeixinController@checkSignature');
 Route::get('/getToken','Weixin\WeixinController@getToken');
+Route::get('/getweather','Weixin\WeixinController@getweather');
 
 //TEST 路由分组
 Route::prefix('/test')->group(function (){
