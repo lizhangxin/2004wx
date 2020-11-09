@@ -96,6 +96,7 @@ class WeixinController extends Controller
         $weather=file_get_contents($url);
         $weather=json_decode($weather,true);
         $weather=implode(',',$weather);
+        dd($weather);
         if($weather['success']){
             $content = '';
             $v=$weather['result'];
