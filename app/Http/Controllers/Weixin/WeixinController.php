@@ -97,7 +97,7 @@ class WeixinController extends Controller
         $weather=json_decode($weather,true);
         if($weather['success']){
             $content = '';
-            $v=$weather['result'];
+            $v=$weather['result']['realTime'];
                 $content .= "日期:".$v['week']."当日温度:".$v['wtTemp1']."天气:".$v['wtId1']."风向:".$v['wtWindNm1'];
 
         }
