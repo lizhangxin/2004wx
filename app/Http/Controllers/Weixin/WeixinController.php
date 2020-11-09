@@ -26,7 +26,7 @@ class WeixinController extends Controller
             // 1接收数据
             $xml_str = file_get_contents("php://input");
             //接收日志
-            file_put_contents('lzx.event.log',$xml_str);
+            file_put_contents('lzx_event.log',$xml_str);
             echo '';
             $this->responseMsg();
         }else{
@@ -41,7 +41,7 @@ class WeixinController extends Controller
 //         dd($access_token);
         if($token) {
             echo "有缓存";
-            echo '<br>';
+            echo $token;
         }else{
             echo "没有缓存";
             $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".env('APPID')."&secret=".env('WX_APPSEC');
@@ -54,22 +54,9 @@ class WeixinController extends Controller
             Redis::set($key,$token);
             Redis::expire($key,3600);
         }
-        echo 'access_token'.$token;
+        echo 'access_token:'.$token;
     }
-    public function text($postArray,$content){
-        $toUser = $postArray->FromUserName;
-//        Log::info('lzx========',$toUser);
-        $fromUser = $postArray->ToUserName;
-        $template = "<xml>
-                                    <ToUserName><![CDATA[%s]]></ToUserName>
-                                    <FromUserName><![CDATA[%s]]></FromUserName>
-                                    <CreateTime>%s</CreateTime>
-                                    <MsgType><![CDATA[%s]]></MsgType>
-                                    <Content><![CDATA[%s]]></Content>
-                                </xml>";
-        $info = sprintf( $template, $toUser, $fromUser, time(), 'text', $content);
-        echo $info;
-    }
+
     public function responseMsg(){
         $postStr = file_get_contents("php://input");
         $postArray = simplexml_load_string($postStr);
@@ -86,8 +73,31 @@ class WeixinController extends Controller
                     $content='enen';
                     $this->text($postArray,$content);
                     break;
+                case '时间';
+                    $content=data('Y-m-d H:i:s',time());
+                    $this->text($postArray,$content);
+                    break;
+                default;
+                $content='失恋小铺';
+                $this->text($postArray,$content);
+                break;
             }
         }
+    }
+
+    public function text($postArray,$content){
+        $toUser = $postArray->FromUserName;
+//        Log::info('lzx========',$toUser);
+        $fromUser = $postArray->ToUserName;
+        $template = "<xml>
+                                    <ToUserName><![CDATA[%s]]></ToUserName>
+                                    <FromUserName><![CDATA[%s]]></FromUserName>
+                                    <CreateTime>%s</CreateTime>
+                                    <MsgType><![CDATA[%s]]></MsgType>
+                                    <Content><![CDATA[%s]]></Content>
+                                </xml>";
+        $info = sprintf( $template, $toUser, $fromUser, time(), 'text', $content);
+        echo $info;
     }
 }
 
