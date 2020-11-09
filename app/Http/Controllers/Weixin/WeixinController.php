@@ -99,9 +99,10 @@ class WeixinController extends Controller
         if($weather['success']){
             $content = '';
             foreach($weather['result'] as $v){
-                $content .='日期:'.$v['days'].$v['week'].'当日温度:'.$v['temperature'].'天气:'.$v['weather'].'风向:'.$v['wind'];
+                $content  .= '地区:'.$v['citynm'].'日期:'.$v['days'].$v['week'].'当日温度:'.$v['temperature'].'天气:'.$v['weather'].'风向:'.$v['wind'];
             }
         }
+        echo $content;die;
         return $content;
     }
     //文本回复消息
