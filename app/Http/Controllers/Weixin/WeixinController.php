@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Weixin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 
@@ -62,7 +61,8 @@ class WeixinController extends Controller
         $postArray = simplexml_load_string($postStr);
         if ($postArray->MsgType=="event"){
             if ($postArray->Event=="subscribe"){
-                $content="欢迎您关注失恋小铺";
+                $array = ['阳光不燥微风正好', '你我山巅自相逢'];
+                $content = $array[array_rand($array)];
                 $this->text($postArray,$content);
 
             }
