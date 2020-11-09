@@ -100,7 +100,7 @@ class WeixinController extends Controller
             $content = '';
             $v=$weather['result'];
 //              $content .= '日期：'.$v['days'].$v['week'].' 当日温度：'.$v['temperature'].' 天气：'.$v['weather'].' 风向：'.$v['wind'];
-                $content .= "日期:".$v['days'].$v['week']."当日温度:".$v['temperature']."天气:".$v['weather']."风向:".$v['wind'];
+                $content .= "日期:".$v['week']."当日温度:".$v['wtWindId']."天气:".$v['wtIcon']."风向:".$v['wtWindNm'];
 
         }
         return $content;
