@@ -20,4 +20,10 @@ Route::get('/', function () {
 Route::any('/checkSignature','Weixin\WeixinController@checkSignature');
 Route::get('/getToken','Weixin\WeixinController@getToken');
 
+//TEST 路由分组
+Route::prefix('/test')->group(function (){
+    Route::get('/guzzle1',"TestController@guzzle1");
 
+
+
+});

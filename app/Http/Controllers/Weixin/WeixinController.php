@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Redis;
 
 class WeixinController extends Controller
 {
-
+    //调用方法
     public function checkSignature(){
         $signature = request()->get("signature");//["signature"];
         $timestamp = request()->get("timestamp");//["timestamp"];
@@ -33,7 +33,7 @@ class WeixinController extends Controller
             echo "";
         }
     }
-
+    //获取token
     public function getToken(){
         // Cache::flush();
        $key = 'wx:access_token';
@@ -56,7 +56,7 @@ class WeixinController extends Controller
         }
         echo 'access_token:'.$token;
     }
-
+    //关注回复
     public function responseMsg(){
         $postStr = file_get_contents("php://input");
         $postArray= simplexml_load_string($postStr,"SimpleXMLElement",LIBXML_NOCDATA);
@@ -75,7 +75,7 @@ class WeixinController extends Controller
                     $this->text($postArray,$content);
                     break;
                 case '时间';
-                    $content=data('Y-m-d H:i:s',time());
+                    $content=date('Y-m-d H:i:s',time());
                     $this->text($postArray,$content);
                     break;
                 case  '天气';
@@ -90,6 +90,23 @@ class WeixinController extends Controller
         }
     }
 
+    //天气接口
+    public function getweather(){
+        $key = "53296";
+        $Sign = "8a16a77a58bc523e3f63a65d696a3fef";
+        $url= 'http://api.k780.com/?app=weather.realtime&weaid=1&ag=today,futureDay,lifeIndex,futureHour&appkey='.$key.'&sign='.$Sign.'&format=json';
+        $weather = file_get_contents($url);
+        $weather= json_decode($weather,true);
+        //dd($weather);
+        if($weather['success']){
+            $content = '';
+            foreach($weather['result'] as $v){
+                $content  .= '地区:'.$v['citynm'].'日期:'.$v['days'].$v['week'].'当日温度:'.$v['temperature'].'天气:'.$v['weather'].'风向:'.$v['wind'];
+            }
+        }
+        return $content;
+    }
+    //文本回复消息
     public function text($postArray,$content){
         $toUser = $postArray->FromUserName;
         $fromUser = $postArray->ToUserName;
@@ -102,20 +119,6 @@ class WeixinController extends Controller
                                 </xml>";
         $info = sprintf( $template, $toUser, $fromUser, time(), 'text', $content);
         echo $info;
-    }
-    public function getweather(){
-        $ip = request()->getClientIp();
-        $url= 'http://api.k780.com:88/?app=weather.future&weaid='.$ip.'&&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4&format=json';
-        $weather = file_get_contents($url);
-        $weather= json_decode($weather,true);
-        //dd($weather);
-        if($weather['success']){
-            $Content = '';
-            foreach($weather['result'] as $v){
-                $Content  .= '地区:'.$v['citynm'].'日期:'.$v['days'].$v['week'].'当日温度:'.$v['temperature'].'天气:'.$v['weather'].'风向:'.$v['wind'];
-            }
-        }
-        return $Content;
     }
 }
 
