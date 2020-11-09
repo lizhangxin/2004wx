@@ -95,12 +95,10 @@ class WeixinController extends Controller
         $url='http://api.k780.com/?app=weather.realtime&weaid=1&ag=today,futureDay,lifeIndex,futureHour&appkey=53296&sign=8a16a77a58bc523e3f63a65d696a3fef&format=json';
         $weather=file_get_contents($url);
         $weather=json_decode($weather,true);
-        //$weather=implode(',',$weather);
-        dd($weather);
         if($weather['success']){
             $content = '';
             $v=$weather['result'];
-                $content .= "日期:".$v['dateYmd']."当日温度:".$v['wtTemp1']."天气:".$v['wtNm1']."风向:".$v['wtWindNm'];
+                $content .= "日期:".$v['week']."当日温度:".$v['wtTemp1']."天气:".$v['wtId1']."风向:".$v['wtWindNm1'];
 
         }
         return $content;
