@@ -170,7 +170,7 @@ class WeixinController extends Controller
             ]
         }';
         $access_token = $this->getToken();
-        $url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=' . $access_token;
+        $url ='https://api.weixin.qq.com/cgi-bin/menu/create?access_token='. $access_token;
         $res = $this->curl($url, $data);
         dd($res);
     }
