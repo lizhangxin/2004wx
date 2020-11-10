@@ -169,10 +169,26 @@ class WeixinController extends Controller
                 }
             ]
         }';
-        $access_token = getToken();
+        $access_token = $this->getToken();
         $url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=' . $access_token;
-        $res = curl($url, $data);
+        $res = $this->curl($url, $data);
         dd($res);
+    }
+    public function curl($url,$menu){
+        //1.初始化
+        $ch = curl_init();
+        //2.设置
+        curl_setopt($ch,CURLOPT_URL,$url);//设置提交地址
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,TRUE);//设置返回值返回字符串
+        curl_setopt($ch,CURLOPT_POST,1);//post提交方式
+        curl_setopt($ch,CURLOPT_POSTFIELDS,$menu);//上传的文件
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);//过滤https协议
+        curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);//过滤https协议
+        //3.执行
+        $output = curl_exec($ch);
+        //关闭
+        curl_close($ch);
+        return $output;
     }
 }
 
