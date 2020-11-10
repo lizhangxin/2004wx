@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Weixin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Filesystem\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -55,7 +56,7 @@ class WeixinController extends Controller
             Redis::set($key,$token);
             Redis::expire($key,3600);
         }
-        echo 'access_token:'.$token;
+        return $token;
     }
     //关注回复
     public function responseMsg(){
@@ -66,7 +67,18 @@ class WeixinController extends Controller
                 $array = ['阳光不燥微风正好', '你我山巅自相逢'];
                 $content = $array[array_rand($array)];
                 $this->text($postArray,$content);
-
+            }
+            if ($postArray->Event == 'CLICK') {
+                $eventkey = $postArray->EventKey;
+                switch ($eventkey) {
+                    case  'V1001_GOOD':
+                        $count = Cache::add('good', 1) ?: Cache::increment('good');
+                        $Content = '点赞人数:' . $count;
+                        $this->text($postArray, $content);
+                        break;
+                    default:
+                        break;
+                }
             }
         }elseif ($postArray->MsgType=="text"){
             $msg=$postArray->Content;
@@ -118,42 +130,33 @@ class WeixinController extends Controller
         $info = sprintf( $template, $toUser, $fromUser, time(), 'text', $content);
         echo $info;
     }
-    public function createMenu()
-    {
-        $data = '{
-                     "button":[
-                     {
-                          "type":"click",
-                          "name":"今日歌曲",
-                          "key":"V1001_TODAY_MUSIC"
-                      },
-                      {
+    //菜单
+    public function createMenu(){
+        $menu = '{
+                   "button":[
+                       {
+                           "type":"click",
+                           "name":"今日歌曲",
+                           "key":"V1001_TODAY_MUSIC"
+                       },
+                       {
                            "name":"菜单",
                            "sub_button":[
-                           {
-                               "type":"view",
-                               "name":"搜索",
-                               "url":"http://www.soso.com/"
-                            },
-                            {
-                                 "type":"miniprogram",
-                                 "name":"wxa",
-                                 "url":"http://mp.weixin.qq.com",
-                                 "appid":"wx286b93c14bbf93aa",
-                                 "pagepath":"pages/lunar/index"
-                             },
-                            {
-                               "type":"click",
-                               "name":"赞一下我们",
-                               "key":"V1001_GOOD"
-                            }]
-                       }]
-                 }';
-        $access_token=$this->getToken();
-        echo $access_token;die;
-        $url ='https://api.weixin.qq.com/cgi-bin/menu/create?access_token='.$access_token;
-
-        $res=$this->curl($url, $data);
+                       {
+                           "type":"view",
+                           "name":"搜索",
+                           "url":"http://www.soso.com/"
+                       },
+                       {
+                           "type":"click",
+                           "name":"赞一下我们",
+                           "key":"V1001_GOOD"
+                       }]\
+                      }]
+                  }';
+        $access_token = $this->getToken();
+        $url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=".$access_token;
+        $res = $this->curl($url,$menu);
         dd($res);
     }
     public function curl($url,$menu){

@@ -20,7 +20,8 @@ Route::get('/', function () {
 Route::any('/checkSignature','Weixin\WeixinController@checkSignature');
 Route::get('/getToken','Weixin\WeixinController@getToken');
 Route::get('/getweather','Weixin\WeixinController@getweather');
-Route::post('/createMenu','Weixin\WeixinController@createMenu');
+Route::any('/createMenu','Weixin\WeixinController@createMenu');
+Route::get('/responseMsg','Weixin\WeixinController@responseMsg');
 
 //TEST 路由分组
 Route::prefix('/test')->group(function (){
