@@ -111,14 +111,14 @@ class WeixinController extends Controller
         if (!empty($postArray)){
             $data = $postArray->MsgType;
             switch ($data){
-                case 'video';
-                    $this->video($postArray);
+                case 'videohandler';
+                    $this->videohandler($postArray);
                     break;
-                case 'vidce';
-                    $this->vidce($postArray);
+                case 'voicehandler';
+                    $this->voicehandler($postArray);
                     break;
-                case  'voice';
-                    $this->voice($postArray);
+                case  'picture';
+                    $this->picture($postArray);
                     break;
                 case  'texthandler';
                     $this->texthandler($postArray);
@@ -207,7 +207,7 @@ class WeixinController extends Controller
     public function videohandler($postArray){
         $data = [
             'add_time'=>$postArray->CreateTime,
-            'media'=>$postArray->MsgType,
+            'media_type'=>$postArray->MsgType,
             'media_id'=>$postArray->MediaId,
             'msg_id'=>$postArray->MsgId,
         ];
@@ -217,29 +217,29 @@ class WeixinController extends Controller
     public function voicehandler($postArray){
         $data = [
             'add_time'=>$postArray->CreateTime,
-            'media'=>$postArray->MsgType,
-            'media_id'=>$postArray->MediaId,
-            'msg_id'=>$postArray->MsgId,
-        ];
-        MediaModel::insert($data);
-    }
-    //文本
-    public function picture($postArray){
-        $data = [
-            'add_time'=>$postArray->CreateTime,
-            'media'=>$postArray->MsgType,
+            'media_type'=>$postArray->MsgType,
             'media_id'=>$postArray->MediaId,
             'msg_id'=>$postArray->MsgId,
         ];
         MediaModel::insert($data);
     }
     //图片
-    public function texthandler($postArray){
+    public function picture($postArray){
         $data = [
-            'add_time'=>$postArray->CreateTime,
-            'media'=>$postArray->MsgType,
+            'add_time'=>$postArray->PicUrl,
+            'media_type'=>$postArray->MsgType,
             'media_id'=>$postArray->MediaId,
             'msg_id'=>$postArray->MsgId,
+        ];
+        MediaModel::insert($data);
+    }
+   //文本
+    public function texthandler($postArray){
+        $data = [
+            'media_url'=>$postArray->CreateTime,
+            'media_type'=>'image',
+            'add_time'=>time(),
+            'openid'=>$postArray->FromUserName,
         ];
         MediaModel::insert($data);
     }
