@@ -123,10 +123,6 @@ class WeixinController extends Controller
                 case  'texthandler';
                     $this->texthandler($postArray);
                     break;
-                default;
-                    $content='失恋小铺';
-                    $this->text($postArray,$content);
-                    break;
             }
         }
     }
