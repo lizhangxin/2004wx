@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Weixin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Filesystem\Cache;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -68,17 +68,25 @@ class WeixinController extends Controller
                 $content = $array[array_rand($array)];
                 $this->text($postArray,$content);
             }
-            if ($postArray->Event == 'CLICK') {
-                $eventkey = $postArray->EventKey;
+            if ($postarray->Event == 'CLICK') {
+                $eventkey = $postarray->EventKey;
                 switch ($eventkey) {
+                    case 'V1001_TODAY_MUSIC':
+                        $array = ['无心斗艳', '消失的眼角膜'];
+                        $Content = $array[array_rand($array)];
+                        infocodl($postarray, $Content);
+                        break;
                     case  'V1001_GOOD':
                         $count = Cache::add('good', 1) ?: Cache::increment('good');
                         $Content = '点赞人数:' . $count;
-                        $this->text($postArray, $content);
+                        infocodl($postarray, $Content);
                         break;
+
                     default:
+
                         break;
                 }
+
             }
         }elseif ($postArray->MsgType=="text"){
             $msg=$postArray->Content;
