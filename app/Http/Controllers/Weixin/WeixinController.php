@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
-
-
+use App\UserModel;
+use App\MediaModel;
 class WeixinController extends Controller
 {
     //调用方法
@@ -62,6 +62,7 @@ class WeixinController extends Controller
     public function responseMsg(){
         $postStr = file_get_contents("php://input");
         $postArray= simplexml_load_string($postStr,"SimpleXMLElement",LIBXML_NOCDATA);
+
         if ($postArray->MsgType=="event"){
             if ($postArray->Event=="subscribe"){
                 $array = ['阳光不燥微风正好', '你我山巅自相逢'];
@@ -81,9 +82,7 @@ class WeixinController extends Controller
                         $content = '点赞人数:' . $count;
                         $this->text($postArray, $content);
                         break;
-
                     default:
-
                         break;
                 }
 
@@ -107,6 +106,27 @@ class WeixinController extends Controller
                 $content='失恋小铺';
                 $this->text($postArray,$content);
                 break;
+            }
+        }
+        if (!empty($postArray)){
+            $data = $postArray->MsgType;
+            switch ($data){
+                case 'video';
+                    $this->video($postArray);
+                    break;
+                case 'vidce';
+                    $this->vidce($postArray);
+                    break;
+                case  'voice';
+                    $this->voice($postArray);
+                    break;
+                case  'texthandler';
+                    $this->texthandler($postArray);
+                    break;
+                default;
+                    $content='失恋小铺';
+                    $this->text($postArray,$content);
+                    break;
             }
         }
     }
@@ -183,6 +203,47 @@ class WeixinController extends Controller
         curl_close($ch);
         return $output;
     }
+    //视频入库
+    public function videohandler($postArray){
+        $data = [
+            'add_time'=>$postArray->CreateTime,
+            'media'=>$postArray->MsgType,
+            'media_id'=>$postArray->MediaId,
+            'msg_id'=>$postArray->MsgId,
+        ];
+        MediaModel::insert($data);
+    }
+    //音频
+    public function voicehandler($postArray){
+        $data = [
+            'add_time'=>$postArray->CreateTime,
+            'media'=>$postArray->MsgType,
+            'media_id'=>$postArray->MediaId,
+            'msg_id'=>$postArray->MsgId,
+        ];
+        MediaModel::insert($data);
+    }
+    //文本
+    public function picture($postArray){
+        $data = [
+            'add_time'=>$postArray->CreateTime,
+            'media'=>$postArray->MsgType,
+            'media_id'=>$postArray->MediaId,
+            'msg_id'=>$postArray->MsgId,
+        ];
+        MediaModel::insert($data);
+    }
+    //图片
+    public function texthandler($postArray){
+        $data = [
+            'add_time'=>$postArray->CreateTime,
+            'media'=>$postArray->MsgType,
+            'media_id'=>$postArray->MediaId,
+            'msg_id'=>$postArray->MsgId,
+        ];
+        MediaModel::insert($data);
+    }
+
 }
 
 
