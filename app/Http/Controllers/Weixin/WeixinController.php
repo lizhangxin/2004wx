@@ -73,12 +73,12 @@ class WeixinController extends Controller
                 switch ($eventkey) {
                     case 'V1001_TODAY_MUSIC':
                         $array = ['无心斗艳', '消失的眼角膜'];
-                        $Content = $array[array_rand($array)];
+                        $content = $array[array_rand($array)];
                         $this->text($postArray, $content);
                         break;
                     case  'V1001_GOOD':
                         $count = Cache::add('good', 1) ?: Cache::increment('good');
-                        $Content = '点赞人数:' . $count;
+                        $content = '点赞人数:' . $count;
                         $this->text($postArray, $content);
                         break;
 
