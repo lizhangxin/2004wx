@@ -68,18 +68,18 @@ class WeixinController extends Controller
                 $content = $array[array_rand($array)];
                 $this->text($postArray,$content);
             }
-            if ($postarray->Event == 'CLICK') {
-                $eventkey = $postarray->EventKey;
+            if ($postArray->Event == 'CLICK') {
+                $eventkey = $postArray->EventKey;
                 switch ($eventkey) {
                     case 'V1001_TODAY_MUSIC':
                         $array = ['无心斗艳', '消失的眼角膜'];
                         $Content = $array[array_rand($array)];
-                        infocodl($postarray, $Content);
+                        $this->text($postArray, $content);
                         break;
                     case  'V1001_GOOD':
                         $count = Cache::add('good', 1) ?: Cache::increment('good');
                         $Content = '点赞人数:' . $count;
-                        infocodl($postarray, $Content);
+                        $this->text($postArray, $content);
                         break;
 
                     default:
