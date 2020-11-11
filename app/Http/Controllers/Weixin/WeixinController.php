@@ -219,19 +219,19 @@ class WeixinController extends Controller
     public function texthandler($postArray){
         $data = [
             'media_url'=>$postArray->CreateTime,
-            'media_type'=>'image',
-            'add_time'=>time(),
+            'media_type'=>$postArray->MsgType,
             'openid'=>$postArray->FromUserName,
+            'msg_id'=>$postArray->MsgId,
         ];
         MediaModel::insert($data);
     }
     //图片
     public function picture($postArray){
         $data = [
-            'add_time'=>$postArray->PicUrl,
-            'media_type'=>$postArray->MsgType,
-            'media_id'=>$postArray->MediaId,
-            'msg_id'=>$postArray->MsgId,
+            'media_url'=>$postArray->PicUrl,
+            'media_type'=>'image',
+            'add_time'=>time(),
+            'openid'=>$postArray->FromUserName,
         ];
         MediaModel::insert($data);
     }
