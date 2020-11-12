@@ -217,6 +217,7 @@ class WeixinController extends Controller
         ];
 //        $array->toArray();
         $client=new Client();
+
         $response=$client->request('POST',$url,[
             'verify'=>false,
             'body'=>json_encode($array,JSON_UNESCAPED_UNICODE)
