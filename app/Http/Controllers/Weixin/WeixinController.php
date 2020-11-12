@@ -82,6 +82,7 @@ class WeixinController extends Controller
                     $json = json_decode($wetch, true);
                     $data = [
                         'openid' => $toUser,
+                        'subscribe' => $json['subscribe'],
                         'nickname' => $json['nickname'],
                         'sex' => $json['sex'],
                         'city' => $json['city'],
