@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Weixin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\UserModel;
 use App\MediaModel;
+use GuzzleHttp\Client;
 class WeixinController extends Controller
 {
     //调用方法
@@ -30,7 +30,6 @@ class WeixinController extends Controller
             echo '';
             $this->responseMsg();
             $this->getweather();
-            $this->createMenu();
         }else{
             echo "";
         }
@@ -90,27 +89,32 @@ class WeixinController extends Controller
                         'province' => $json['province'],
                     ];
                     $weachInfo = UserModel::insert($data);
+                }
+                    $this->text($postArray, $content);
+            }
+            if ($postArray->Event == 'CLICK') {
+                if ($postArray->EventKey == 'weather') {
+                    //调用天气
+                    $content = $this->getweather();
                     $this->text($postArray, $content);
                 }
             }
             if ($postArray->Event == 'CLICK') {
-                $eventkey = $postArray->EventKey;
-                switch ($eventkey) {
-                    case 'V1001_TODAY_MUSIC':
-                        $array = ['无心斗艳', '消失的眼角膜'];
-                        $content = $array[array_rand($array)];
-                        $this->text($postArray, $content);
-                        break;
-                    case  'V1001_GOOD':
-                        $count = Cache::add('good', 1) ?: Cache::increment('good');
-                        $content = '点赞人数:' . $count;
-                        $this->text($postArray, $content);
-                        break;
-                    default:
-                        break;
+                if ($postArray->EventKey == 'checkin') {
+                    $key = 'USER_SIGN_' . date('Y_m_d', time());
+                    $content = '签到成功';
+                    $user_sign_info = Redis::zrange($key, 0, -1);
+                    if(in_array((string)$toUser,$user_sign_info)){
+                        $content='已经签到，不可重复签到';
+                    }else{
+                        Redis::zadd($key,time(),(string)$toUser);
+                    }
+                    $result= $this->text($postArray, $content);
+                    return $result;
                 }
 
             }
+
         }elseif ($postArray->MsgType=="text"){
             $msg=$postArray->Content;
             switch ($msg){
@@ -175,33 +179,48 @@ class WeixinController extends Controller
         echo $info;
     }
     //菜单
-    public function createMenu(){
-        $menu = '{
-                   "button":[
-                       {
-                           "type":"click",
-                           "name":"今日歌曲",
-                           "key":"V1001_TODAY_MUSIC"
-                       },
-                       {
-                           "name":"菜单",
-                           "sub_button":[
-                       {
-                           "type":"view",
-                           "name":"搜索",
-                           "url":"http://www.soso.com/"
-                       },
-                       {
-                           "type":"click",
-                           "name":"赞一下我们",
-                           "key":"V1001_GOOD"
-                       }]\
-                      }]
-                  }';
-        $access_token = $this->getToken();
-        $url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=".$access_token;
-        $res = $this->curl($url,$menu);
-        dd($res);
+    public function custom(){
+        $access_token=$this->getToken();
+        $url='https://api.weixin.qq.com/cgi-bin/menu/create?access_token='.$access_token;
+//        echo $url;
+        $array=[
+            'button'=>[
+                [
+                    'type'=>'click',
+                    'name'=>"jd.2004",
+                    'key'=>'k_jd_2004',
+                ],
+                [
+                    'name'=>'菜单',
+                    "sub_button"=>[
+                        [
+                            'type'  => 'click',
+                            'name'  => '传图',
+                            'key'   => 'uploadimg'
+                        ],
+                        [
+                            'type'  => 'click',
+                            'name'  => '天气',
+                            'key'   => 'weather'
+                        ],
+                        [
+                            'type'  => 'click',
+                            'name'  => '签到',
+                            'key'   => 'checkin'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+//        $array->toArray();
+//
+        $client=new Client();
+        $response=$client->request('POST',$url,[
+            'verify'=>false,
+            'body'=>json_encode($array,JSON_UNESCAPED_UNICODE)
+        ]);
+        $data=$response->getBody();
+        echo $data;
     }
     public function curl($url,$menu){
         //1.初始化
@@ -261,5 +280,3 @@ class WeixinController extends Controller
     }
 
 }
-
-
