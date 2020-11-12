@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
-
+use App\UserModel;
 use App\MediaModel;
 class WeixinController extends Controller
 {
@@ -60,14 +60,38 @@ class WeixinController extends Controller
     }
     //关注回复
     public function responseMsg(){
+        //获取微信post数据 xml(格式)
         $postStr = file_get_contents("php://input");
         $postArray= simplexml_load_string($postStr,"SimpleXMLElement",LIBXML_NOCDATA);
-
+        $toUser= $postArray->FromUserName;//openid
+        //evnet  判断是不是推送事件
         if ($postArray->MsgType=="event"){
-            if ($postArray->Event=="subscribe"){
-                $array = ['阳光不燥微风正好', '你我山巅自相逢'];
-                $content = $array[array_rand($array)];
-                $this->text($postArray,$content);
+            if ($postArray->Event=="subscribe") {
+                $WeachModelInfo = UserModel::where('openid', $toUser)->first();
+                if (is_object($WeachModelInfo)) {
+                    $WeachModelInfo = $WeachModelInfo->toArray();
+                }
+                if (!empty($WeachModelInfo)) {
+                    $content = "欢迎回来";
+                } else {
+                    $array = ['阳光不燥微风正好', '你我山巅自相逢'];
+                    $content = $array[array_rand($array)];
+                    $token = $this->getToken();
+                    $data = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=" . $token . "&openid=" . $toUser . "&lang=zh_CN";
+                    file_put_contents('user_wetch', $data);//存文件
+                    $wetch = file_get_contents($data);
+                    $json = json_decode($wetch, true);
+                    $data = [
+                        'openid' => $toUser,
+                        'nickname' => $json['nickname'],
+                        'sex' => $json['sex'],
+                        'city' => $json['city'],
+                        'country' => $json['country'],
+                        'province' => $json['province'],
+                    ];
+                    $weachInfo = UserModel::insert($data);
+                    $this->text($postArray, $content);
+                }
             }
             if ($postArray->Event == 'CLICK') {
                 $eventkey = $postArray->EventKey;
@@ -113,7 +137,7 @@ class WeixinController extends Controller
                 case 'voice';
                     $this->voicehandler($postArray);
                     break;
-                case  'texth';
+                case  'text';
                     $this->texthandler($postArray);
                     break;
                 case  'image';
