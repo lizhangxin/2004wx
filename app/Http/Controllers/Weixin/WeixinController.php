@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\UserModel;
 use App\MediaModel;
+//use GuzzleHttp\Client;
 use GuzzleHttp\Client;
 class WeixinController extends Controller
 {
@@ -215,7 +216,6 @@ class WeixinController extends Controller
             ]
         ];
 //        $array->toArray();
-//
         $client=new Client();
         $response=$client->request('POST',$url,[
             'verify'=>false,
