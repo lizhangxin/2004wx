@@ -39,8 +39,8 @@ class WeixinController extends Controller
     //获取token
     public function getToken(){
         // Cache::flush();
-       $key = 'wx:access_token';
-       $token = Redis::get($key);
+        $key = 'wx:access_token';
+        $token = Redis::get($key);
 //         dd($access_token);
         if($token) {
             echo "有缓存";
@@ -93,7 +93,7 @@ class WeixinController extends Controller
                     ];
                     $weachInfo = UserModel::insert($data);
                 }
-                    $this->text($postArray, $content);
+                $this->text($postArray, $content);
             }
             if ($postArray->Event == 'CLICK') {
                 if ($postArray->EventKey == 'weather') {
@@ -162,7 +162,7 @@ class WeixinController extends Controller
         if($weather['success']){
             $content = '';
             $v=$weather['result']['realTime'];
-                $content .= "日期:".$v['week']."当日温度:".$v['wtTemp']."天气:".$v['wtNm']."风向:".$v['wtWindNm'];
+            $content .= "日期:".$v['week']."当日温度:".$v['wtTemp']."天气:".$v['wtNm']."风向:".$v['wtWindNm'];
 
         }
         return $content;
@@ -261,7 +261,7 @@ class WeixinController extends Controller
         ];
         MediaModel::insert($data);
     }
-   //文本
+    //文本
     public function texthandler($postArray){
         $data = [
             'media_url'=>$postArray->CreateTime,

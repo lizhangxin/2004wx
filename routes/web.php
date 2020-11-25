@@ -26,7 +26,17 @@ Route::get('/custom','Weixin\WeixinController@custom');
 //TEST 路由分组
 Route::prefix('/test')->group(function (){
     Route::get('/guzzle1',"TestController@guzzle1");
+});
 
+//小程序接口
+Route::prefix('/api')->group(function (){
+    Route::get('/test',"Weixin\ApiController@test");
+});
 
+Route::prefix('/wx')->group(function (){
+    Route::get('/login','Weixin\XcxController@login');
+    Route::get('/goods','Weixin\XcxController@goods');
+    Route::get('/detail','Weixin\XcxController@detail');
 
 });
+
