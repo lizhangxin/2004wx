@@ -34,9 +34,10 @@ Route::prefix('/api')->group(function (){
 });
 
 Route::prefix('/wx')->group(function (){
-    Route::get('/login','Weixin\XcxController@login');
+    Route::any('/login','Weixin\XcxController@login');
     Route::get('/goods','Weixin\XcxController@goods');
     Route::get('/detail','Weixin\XcxController@detail');
-
+    Route::get('/add_fav','Weixin\XcxController@add_fav');//收藏
+    Route::get('/no_fav','Weixin\XcxController@no_fav');//取消收藏
 });
 
