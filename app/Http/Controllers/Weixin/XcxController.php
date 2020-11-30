@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Redis;
 use App\GooodsModel;
 use App\CollectModel;
 use App\User_openidModel;
+use App\CartModle;
+
 class XcxController extends Controller
 {
     public function login(Request $request){
@@ -136,6 +138,67 @@ class XcxController extends Controller
         }
         return $respones;
 
+    }
+    //加入购物车
+    public function cart(Request $request){
+        $goods_id =$request->get('goods_id');
+//        dd($goods_id);
+        $token=$request->get('token');
+        $key = "xcxkey:".$token;
+        $token = Redis::hgetall($key);
+        $user_id = User_openidModel::where('openid',$token['openid'])->select('user_id')->first();
+//        dd($user_id);
+        $data=[
+            'goods_id'=>$goods_id,
+            'add_time'=>time(),
+            'user_id'=>$user_id->user_id,
+        ];
+        $res = CartModle::insert($data);
+        if ($res){
+            $respones=[
+              'error'=>0,
+              'msg'=>'加入购物车成功',
+            ];
+        }else{
+            $respones=[
+                'error'=>500001,
+                'msg'=>'加入失败',
+            ];
+        }
+        return $respones;
+
+    }
+
+//    购物车列表
+    public function cartlist(Request $request){
+        $token = $request->get('token');
+        $key="xcxkey:".$token;
+        //取出token
+        $token = Redis::hgetall($key);
+        dd($token);
+        $user_id=User_openidModel::where('openid',$token['openid'])->select('id')->first();
+
+        $goods = CartModle::where(['user_id'=>$user_id])->get();
+
+        if ($goods){    //购物车所有商品
+            $goods= $goods->toArray();
+            foreach ($goods as $k=>&$v){
+                $g = GooodsModel::find($v['goods_id']);
+                $v['goods_name']=$g->goods_name;
+                $v['goods_price']=$g->goods_price;
+                $v['goods_img']=$g->goods_img;
+            }
+        }else{   //购物车没有商品
+            $goods = [];
+        }
+        $respones =[
+            'error'=>0,
+            'msg'=>'ok',
+            'data'=>[
+                'list'=>$goods
+            ]
+        ];
+        return $respones;
     }
 
 }

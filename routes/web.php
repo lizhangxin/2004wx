@@ -34,10 +34,14 @@ Route::prefix('/api')->group(function (){
 });
 
 Route::prefix('/wx')->group(function (){
-    Route::any('/login','Weixin\XcxController@login');
-    Route::get('/goods','Weixin\XcxController@goods');
-    Route::get('/detail','Weixin\XcxController@detail');
+    Route::any('/login','Weixin\XcxController@login');//登录
+    Route::get('/goods','Weixin\XcxController@goods');//商品数据
+    Route::get('/detail','Weixin\XcxController@detail');//商品详情
     Route::get('/add_fav','Weixin\XcxController@add_fav');//收藏
     Route::get('/no_fav','Weixin\XcxController@no_fav');//取消收藏
+    Route::get('/cart','Weixin\XcxController@cart');//加入购物车
+    Route::get('/cartlist','Weixin\XcxController@cartlist');//加入购物车
+
+
 });
 
