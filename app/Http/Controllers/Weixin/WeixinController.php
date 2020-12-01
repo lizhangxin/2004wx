@@ -25,7 +25,7 @@ class WeixinController extends Controller
 
         if( $tmpStr == $signature ){  //验证通过
             // 1接收数据
-            echo $echostr;die;
+//            echo $echostr;die;
 
 
             $xml_str = file_get_contents("php://input");
