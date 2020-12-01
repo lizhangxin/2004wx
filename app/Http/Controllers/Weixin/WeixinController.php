@@ -30,9 +30,9 @@ class WeixinController extends Controller
             file_put_contents('lzx_event.log',$xml_str);
             echo '';
             $this->responseMsg();
+
             $this->getweather();
             $this->custom();
-            return true;
         }else{
             echo "";
             return false;
