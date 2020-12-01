@@ -30,9 +30,9 @@ class WeixinController extends Controller
             file_put_contents('lzx_event.log',$xml_str);
             echo '';
             $this->responseMsg();
-
             $this->getweather();
             $this->custom();
+            return true;
         }else{
             echo "";
             return false;
@@ -45,10 +45,8 @@ class WeixinController extends Controller
         $token = Redis::get($key);
 //         dd($access_token);
         if($token) {
-            echo "有缓存";
             echo $token;
         }else{
-            echo "没有缓存";
             $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".env('APPID')."&secret=".env('WX_APPSEC');
             // dd($url);
             $res = file_get_contents($url);
@@ -66,6 +64,7 @@ class WeixinController extends Controller
         //获取微信post数据 xml(格式)
         $postStr = file_get_contents("php://input");
         $postArray= simplexml_load_string($postStr,"SimpleXMLElement",LIBXML_NOCDATA);
+
         $toUser= $postArray->FromUserName;//openid
         //evnet  判断是不是推送事件
         if ($postArray->MsgType=="event"){
@@ -181,7 +180,7 @@ class WeixinController extends Controller
                                     <Content><![CDATA[%s]]></Content>
                                 </xml>";
         $info = sprintf( $template, $toUser, $fromUser, time(), 'text', $content);
-        echo $info;
+        echo $info;die;
     }
     //菜单
     public function custom(){
