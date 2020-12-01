@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Weixin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use App\UserModel;
 use App\MediaModel;
@@ -26,8 +27,9 @@ class WeixinController extends Controller
         if( $tmpStr == $signature ){  //验证通过
             // 1接收数据
             $xml_str = file_get_contents("php://input");
+            Log::info($xml_str);
             //接收日志
-            file_put_contents('lzx_event.log',$xml_str,'FILE_APPEND');
+            file_put_contents('lzx_event.log',$xml_str);
             echo '';
             $this->responseMsg();
             $this->getweather();
