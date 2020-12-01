@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Weixin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use App\UserModel;
 use App\MediaModel;
@@ -27,15 +26,16 @@ class WeixinController extends Controller
         if( $tmpStr == $signature ){  //验证通过
             // 1接收数据
             $xml_str = file_get_contents("php://input");
-            Log::info($xml_str);
             //接收日志
             file_put_contents('lzx_event.log',$xml_str);
             echo '';
             $this->responseMsg();
             $this->getweather();
             $this->custom();
+            return true;
         }else{
             echo "";
+            return false;
         }
     }
     //获取token
@@ -45,8 +45,10 @@ class WeixinController extends Controller
         $token = Redis::get($key);
 //         dd($access_token);
         if($token) {
+            echo "有缓存";
             echo $token;
         }else{
+            echo "没有缓存";
             $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".env('APPID')."&secret=".env('WX_APPSEC');
             // dd($url);
             $res = file_get_contents($url);
