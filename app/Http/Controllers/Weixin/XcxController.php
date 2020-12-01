@@ -142,7 +142,6 @@ class XcxController extends Controller
     //加入购物车
     public function cart(Request $request){
         $goods_id =$request->get('goods_id');
-//        dd($goods_id);
         $token=$request->get('token');
         $key = "xcxkey:".$token;
         $token = Redis::hgetall($key);
@@ -175,27 +174,31 @@ class XcxController extends Controller
         $key="xcxkey:".$token;
         //取出token
         $token = Redis::hgetall($key);
-        dd($token);
-        $user_id=User_openidModel::where('openid',$token['openid'])->select('id')->first();
-
-        $goods = CartModle::where(['user_id'=>$user_id])->get();
-
-        if ($goods){    //购物车所有商品
-            $goods= $goods->toArray();
-            foreach ($goods as $k=>&$v){
-                $g = GooodsModel::find($v['goods_id']);
-                $v['goods_name']=$g->goods_name;
-                $v['goods_price']=$g->goods_price;
-                $v['goods_img']=$g->goods_img;
-            }
-        }else{   //购物车没有商品
-            $goods = [];
-        }
+//        dd($token);
+        $user_id=User_openidModel::where('openid',$token['openid'])->select('user_id')->first();
+        $goods = CartModle::where(['user_id'=>$user_id->user_id])->get();
+         $kk=CartModle::join("goods","cart.goods_id","=","goods.goods_id")->get();
+//            dd($kk);
+//
+//
+//        dd($goods);
+//        if ($goods){    //购物车所有商品
+//            $goods = $goods->toArray();
+//            foreach($goods as $k=>&$v){
+//                $g = GooodsModel::find($v['goods_id'])->toArray();
+//
+//                  $v['goods_name'] = $g['goods_name'];
+////                $v['goods_price'] = $g->goods_price;
+////                $v['goods_img'] = $g->goods_img;
+//            }
+//        }else{   //购物车没有商品
+//            $goods = [];
+//        }
         $respones =[
             'error'=>0,
             'msg'=>'ok',
             'data'=>[
-                'list'=>$goods
+                'list'=>$kk
             ]
         ];
         return $respones;

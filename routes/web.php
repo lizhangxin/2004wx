@@ -20,7 +20,6 @@ Route::get('/', function () {
 Route::any('/checkSignature','Weixin\WeixinController@checkSignature');
 Route::get('/getToken','Weixin\WeixinController@getToken');
 Route::get('/getweather','Weixin\WeixinController@getweather');
-Route::any('/createMenu','Weixin\WeixinController@createMenu');
 Route::get('/responseMsg','Weixin\WeixinController@responseMsg');
 Route::get('/custom','Weixin\WeixinController@custom');
 //TEST 路由分组
