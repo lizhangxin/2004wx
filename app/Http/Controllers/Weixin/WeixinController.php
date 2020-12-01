@@ -13,7 +13,6 @@ class WeixinController extends Controller
 {
     //调用方法
     public function checkSignature(){
-        file_put_contents('lzx_event.log');
         $signature = request()->get("signature");//["signature"];
         $timestamp = request()->get("timestamp");//["timestamp"];
         $nonce = request()->get("nonce");//["nonce"];
@@ -28,7 +27,7 @@ class WeixinController extends Controller
             // 1接收数据
             $xml_str = file_get_contents("php://input");
             //接收日志
-            file_put_contents('lzx_event.log',$xml_str);
+            file_put_contents('lzx_event.log',$xml_str,'FILE_APPEND');
             echo '';
             $this->responseMsg();
             $this->getweather();
