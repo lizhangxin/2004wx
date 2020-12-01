@@ -45,10 +45,8 @@ class WeixinController extends Controller
         $token = Redis::get($key);
 //         dd($access_token);
         if($token) {
-            echo "有缓存";
             echo $token;
         }else{
-            echo "没有缓存";
             $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".env('APPID')."&secret=".env('WX_APPSEC');
             // dd($url);
             $res = file_get_contents($url);
