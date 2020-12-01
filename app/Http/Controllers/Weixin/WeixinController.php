@@ -16,7 +16,7 @@ class WeixinController extends Controller
         $signature = request()->get("signature");//["signature"];
         $timestamp = request()->get("timestamp");//["timestamp"];
         $nonce = request()->get("nonce");//["nonce"];
-
+        $echostr=request()->get("echostr");
         $token = env('WX_TOKEN');
         $tmpArr = array($token, $timestamp, $nonce);
         sort($tmpArr, SORT_STRING);
@@ -25,6 +25,9 @@ class WeixinController extends Controller
 
         if( $tmpStr == $signature ){  //验证通过
             // 1接收数据
+            echo $echostr;die;
+
+
             $xml_str = file_get_contents("php://input");
             //接收日志
             file_put_contents('lzx_event.log',$xml_str);
