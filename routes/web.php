@@ -22,6 +22,10 @@ Route::get('/getToken','Weixin\WeixinController@getToken');
 Route::get('/getweather','Weixin\WeixinController@getweather');
 Route::get('/responseMsg','Weixin\WeixinController@responseMsg');
 Route::get('/custom','Weixin\WeixinController@custom');
+Route::any('/pinyin','Weixin\WeixinController@pinyin');//拼音翻译
+Route::any('/history','Weixin\WeixinController@history');//拼音翻译
+
+
 //TEST 路由分组
 Route::prefix('/test')->group(function (){
     Route::get('/guzzle1',"TestController@guzzle1");

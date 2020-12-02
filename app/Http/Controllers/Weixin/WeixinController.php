@@ -9,6 +9,7 @@ use App\UserModel;
 use App\MediaModel;
 //use GuzzleHttp\Client;
 use GuzzleHttp\Client;
+use App\HistoryModel;
 class WeixinController extends Controller
 {
     //调用方法
@@ -126,7 +127,23 @@ class WeixinController extends Controller
             $msg=$postArray->Content;
             switch ($msg){
                 case '你好';
-                    $content='enen';
+                    $content='nihao';
+                    $this->text($postArray,$content);
+                    break;
+                case '在吗';
+                    $content='zaima';
+                    $this->text($postArray,$content);
+                    break;
+                case '哈哈';
+                    $content='haha';
+                    $this->text($postArray,$content);
+                    break;
+                case '在';
+                    $content='zai';
+                    $this->text($postArray,$content);
+                    break;
+                case '李章鑫';
+                    $content='lizhangxin';
                     $this->text($postArray,$content);
                     break;
                 case '时间';
@@ -136,6 +153,10 @@ class WeixinController extends Controller
                 case  '天气';
                     $content = $this->getweather();
                     $this->text($postArray,$content);
+                    break;
+                default:
+                    $Content = 'sorry';
+                    $this->text($postArray, $Content);
                     break;
             }
         }
@@ -285,5 +306,27 @@ class WeixinController extends Controller
         ];
         MediaModel::insert($data);
     }
+    public function pinyin(){
+        $key='ebeb49b623fec6ec987ea75717fd2e78';
+        $text="天气接口";
+        $url='http://api.tianapi.com/txapi/pinyin/index?key='.$key.'&text='.$text.'';
+        $res = file_get_contents($url);
+        $data=json_decode($res,true);
+        dd($data);
+    }
+    public function history(){
+
+
+        $history = HistoryModel::orderBy("time","desc")->limit(10)->get()->toArray();
+
+        foreach($history as $k=>$v){
+
+            echo date("Y-m-d H:i",$v['time'])."\r\n".$v['contents']. "\r\n";
+
+        }
+
+
+    }
+
 
 }
